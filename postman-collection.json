@@ -1,0 +1,253 @@
+{
+  "info": {
+    "name": "Elektron Savdo va Ombor API - Sinov Adapteri (100 Ball)",
+    "_postman_id": "a1b2c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d",
+    "description": "Elektron savdo va ombor boshqaruvi API uchun Postman sinov to'plami (Test Adapter).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:3000", "type": "string" },
+    { "key": "adminToken", "value": "", "type": "string" },
+    { "key": "cust1Token", "value": "", "type": "string" },
+    { "key": "cust2Token", "value": "", "type": "string" },
+    { "key": "lastOrderId", "value": "", "type": "string" },
+    { "key": "lastOrderNumber", "value": "", "type": "string" }
+  ],
+  "item": [
+    {
+      "name": "1. Autentifikatsiya (Auth)",
+      "item": [
+        {
+          "name": "Admin Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.token) { pm.collectionVariables.set('adminToken', jsonData.token); }"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@shop.uz\",\n  \"password\": \"Admin123!\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/auth/login", "host": ["{{baseUrl}}"], "path": ["api", "auth", "login"] }
+          }
+        },
+        {
+          "name": "Customer 1 Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.token) { pm.collectionVariables.set('cust1Token', jsonData.token); }"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"customer1@shop.uz\",\n  \"password\": \"Customer123!\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/auth/login", "host": ["{{baseUrl}}"], "path": ["api", "auth", "login"] }
+          }
+        },
+        {
+          "name": "Customer 2 Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.token) { pm.collectionVariables.set('cust2Token', jsonData.token); }"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"customer2@shop.uz\",\n  \"password\": \"Customer123!\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/auth/login", "host": ["{{baseUrl}}"], "path": ["api", "auth", "login"] }
+          }
+        },
+        {
+          "name": "Get Profile (Me)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{cust1Token}}" }],
+            "url": { "raw": "{{baseUrl}}/api/auth/me", "host": ["{{baseUrl}}"], "path": ["api", "auth", "me"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Katalog va Qoldiqlar (Catalog & Stock)",
+      "item": [
+        {
+          "name": "Katalog ro'yxati (Filtr, saralash, sahifalash)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/products?sort=price_asc&page=1&limit=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "products"],
+              "query": [
+                { "key": "sort", "value": "price_asc" },
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "10" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Mahsulot tafsiloti (Omborlar kesimida qoldiq)",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/products/1", "host": ["{{baseUrl}}"], "path": ["api", "products", "1"] }
+          }
+        },
+        {
+          "name": "Kategoriyalar ro'yxati",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/categories", "host": ["{{baseUrl}}"], "path": ["api", "categories"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Savat (Cart)",
+      "item": [
+        {
+          "name": "Savatni ko'rish",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{cust1Token}}" }],
+            "url": { "raw": "{{baseUrl}}/api/cart", "host": ["{{baseUrl}}"], "path": ["api", "cart"] }
+          }
+        },
+        {
+          "name": "Savatga qo'shish (Maksimal limit tekshiriladi)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{cust1Token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"variant_id\": 1,\n  \"quantity\": 1\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/cart/items", "host": ["{{baseUrl}}"], "path": ["api", "cart", "items"] }
+          }
+        },
+        {
+          "name": "Savatni tozalash",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{cust1Token}}" }],
+            "url": { "raw": "{{baseUrl}}/api/cart", "host": ["{{baseUrl}}"], "path": ["api", "cart"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Buyurtma va Rezerv (Order & Reservation)",
+      "item": [
+        {
+          "name": "Buyurtma yaratish (Tranzaksiyali rezerv)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var data = pm.response.json();",
+                  "if (data.order) {",
+                  "  pm.collectionVariables.set('lastOrderId', data.order.id);",
+                  "  pm.collectionVariables.set('lastOrderNumber', data.order.order_number);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{cust1Token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"warehouse_id\": 1,\n  \"items\": [\n    {\n      \"variant_id\": 1,\n      \"quantity\": 1\n    }\n  ]\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/orders", "host": ["{{baseUrl}}"], "path": ["api", "orders"] }
+          }
+        },
+        {
+          "name": "Buyurtmani ko'rish (IDOR himoyasi)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{cust1Token}}" }],
+            "url": { "raw": "{{baseUrl}}/api/orders/{{lastOrderId}}", "host": ["{{baseUrl}}"], "path": ["api", "orders", "{{lastOrderId}}"] }
+          }
+        },
+        {
+          "name": "Boshqa mijoz buyurtmasini ochish (IDOR Sinovi - 403 kutiladi)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{cust2Token}}" }],
+            "url": { "raw": "{{baseUrl}}/api/orders/{{lastOrderId}}", "host": ["{{baseUrl}}"], "path": ["api", "orders", "{{lastOrderId}}"] }
+          }
+        },
+        {
+          "name": "Buyurtmani bekor qilish (Faqat 1 marta ruxsat)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{cust1Token}}" }],
+            "url": { "raw": "{{baseUrl}}/api/orders/{{lastOrderId}}/cancel", "host": ["{{baseUrl}}"], "path": ["api", "orders", "{{lastOrderId}}", "cancel"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. Soxta To'lov Callback (Mock Payments)",
+      "item": [
+        {
+          "name": "Avtomatik To'lov Sinovi (Mock Checkout)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{cust1Token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"order_number\": \"{{lastOrderNumber}}\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/payments/mock-checkout", "host": ["{{baseUrl}}"], "path": ["api", "payments", "mock-checkout"] }
+          }
+        }
+      ]
+    }
+  ]
+}
