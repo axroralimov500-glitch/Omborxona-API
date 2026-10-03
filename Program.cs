@@ -121,8 +121,7 @@ namespace EcommerceWarehouseApi
             var testProc = Process.Start(psi);
             testProc.WaitForExit();
             Console.WriteLine("\nTest yakunlandi. Chiqish kodi: " + testProc.ExitCode);
-            Console.WriteLine("Chiqish uchun istalgan tugmani bosing...");
-            Console.ReadKey();
+            Environment.Exit(testProc.ExitCode);
         }
 
         static void StartServer(string nodePath, string baseDir)
