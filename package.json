@@ -1,0 +1,22 @@
+{
+  "name": "ecommerce-warehouse-api",
+  "version": "1.0.0",
+  "description": "Elektron savdo va ombor boshqaruvi API - Concurrency-safe, transactional inventory and payment callback system",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "test": "node test-runner.js",
+    "build:exe": "build-exe.bat"
+  },
+  "keywords": [
+    "ecommerce",
+    "warehouse",
+    "inventory",
+    "concurrency",
+    "transactions",
+    "sqlite",
+    "api"
+  ],
+  "author": "Antigravity Dev",
+  "license": "MIT"
+}
